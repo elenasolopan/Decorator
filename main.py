@@ -4,16 +4,17 @@ import datetime
 
 def logger(log_path):
     def log_info(function):
-        def function_replaced():
-            result = function()
+        def function_replaced(*args, **kwargs):
+            result = function(*args, **kwargs)
             with open(log_path, 'a+', encoding='utf-8') as f:
-                f.writelines(f"[{datetime.datetime.now()}] {function.__name__} [{function.__defaults__[0]}] {result}\n")
-        return function_replaced()
+                f.write(f"{datetime.datetime.now()} {function.__name__} {args} {kwargs} {result}\n")
+            return result
+        return function_replaced
     return log_info
 
 
 @logger(r'C:\Users\zinov\PycharmProjects\PYTHON OOP\Decorator\app.log')
-def search_name(number_doc=input("Введите номер документа пользователя: ")):
+def search_name(number_doc):
     """ функция, которая спросит номер документа из "documents" и выведет имя человека, которому он принадлежит"""
     for document in documents:
         documents_sorted = dict([(document['number'], document['name'])])
@@ -23,3 +24,7 @@ def search_name(number_doc=input("Введите номер документа �
                 return name
     print(f"Документ с номером '{number_doc}' отсутствует")
     return f'Error'
+
+
+if __name__ == '__main__':
+    search_name(input("Введите номер документа пользователя: "))
